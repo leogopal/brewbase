@@ -1,9 +1,41 @@
 <?php
-/**
- * BrewBase functions and definitions
- *
- * @package BrewBase
- */
+
+function brew_dependencies() {
+
+		$brew_dependancies = [              
+		  'inc/custom-header.php',	// Implement the Custom Header feature.
+		  'inc/template-tags.php',	// Custom template tags for this theme.
+		  'inc/extras.php', 		// Custom functions that act independently of the theme templates.
+		  'inc/customizer.php',  	// Customizer additions.
+		  'inc/jetpack.php'			// Load Jetpack compatibility file.              // Initial theme setup and constants
+		];
+
+		foreach ( $brew_dependancies as $file ) {
+		  if ( !file_exists( BREW_DIR . $file ) ) {
+		    trigger_error(sprintf(__('Error locating %s for inclusion', 'brew'), $file), E_USER_ERROR);
+		  }
+		  $filepath = BREW_DIR . $file;
+		  require_once $filepath;
+		}
+
+		unset($file, $filepath);
+
+	}
+brew_dependencies();
+
+
+add_action('wp_head','nmpza_ajaxurl');
+
+function nmpza_ajaxurl() {
+    ?>
+    <script type="text/javascript">
+        var ajaxurl 	= '<?php echo admin_url("admin-ajax.php"); ?>';
+        var nmpza_root 	= '<?php echo get_stylesheet_directory_uri(); ?>';
+    </script>
+    <?php
+    echo BREW_URL . ' ' . BREW_DIR;
+}
+
 
 if ( ! function_exists( 'brew_setup' ) ) :
 /**
@@ -76,7 +108,7 @@ function brew_setup() {
 	) ) );
 }
 endif; // brew_setup
-add_action( 'after_setup_theme', 'brew_setup' );
+
 
 /**
  * Set the content width in pixels, based on the theme's design and stylesheet.
@@ -124,27 +156,4 @@ function brew_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'brew_scripts' );
 
-/**
- * Implement the Custom Header feature.
- */
-require get_template_directory() . '/inc/custom-header.php';
 
-/**
- * Custom template tags for this theme.
- */
-require get_template_directory() . '/inc/template-tags.php';
-
-/**
- * Custom functions that act independently of the theme templates.
- */
-require get_template_directory() . '/inc/extras.php';
-
-/**
- * Customizer additions.
- */
-require get_template_directory() . '/inc/customizer.php';
-
-/**
- * Load Jetpack compatibility file.
- */
-require get_template_directory() . '/inc/jetpack.php';
